@@ -1,0 +1,72 @@
+// Define target cpu frequence. Used for delay, configure flash latency
+#define F_CPU {{RCC_Conf['F_CPU']}}
+
+#include <clock.h>
+#include <iopins.h>
+
+using namespace Zhele::Clock;
+using namespace Zhele::IO;
+
+void ConfigureClock(void);
+void ConfigureGPIO(void);
+
+int main()
+{
+	ConfigureClock();	
+	ConfigureGPIO();
+	
+	for (;;)
+	{
+	}
+}
+
+void ConfigureClock()
+{
+	{% if RCC_Conf['SystemClock'] == 'HSE' %}// Set clock sourse as HSE
+	SysClock::SelectClockSource(SysClock::HSE);{% endif %}
+	{% if RCC_Conf['SystemClock'] == 'HSI' %}// Set clock sourse as HSI
+	SysClock::SelectClockSource(SysClock::HSI);{% endif %}
+	{% if RCC_Conf['SystemClock'] == 'PLLCLK' %}// Set clock sourse as Pll
+	SysClock::SelectClockSource(SysClock::Pll);		
+	{% if RCC_Conf['clockSource'] == 'External' %}// Select HSE as PLL source
+	PllClock::SelectClockSource(PllClock::External);{% endif %}
+	{%if RCC_Conf['clockSource'] == 'Internal' %}// // Select HSI as PLL source
+	PllClock::SelectClockSource(PllClock::Internal);{% endif %}
+	{% if 'PLLM' in RCC_Conf.keys() %}// Set PLLM value
+	PllClock::SetDivider({{RCC_Conf['PLLM']}});
+	{% else %}// Set PllDivider value
+	PllClock::SetDevider({{RCC_Conf['PLLDivider']}});{% endif %}	
+	{% if 'PLLN' in RCC_Conf.keys() %}// Set PLLN value
+	PllClock::SetMultiplier({{RCC_Conf['PLLN']}});{% else %}//Set Multiplier
+	PllClock::SetMultiplier({{RCC_Conf['PLLMultiplier']}});{% endif %}{% endif %}
+	{% if 'AHBPrescaler' in RCC_Conf.keys() %}// Set Ahb prescaler value
+	AhbClock::SetPrescaler(Prescaler::Div{{RCC_Conf['AHBPrescaler']}});{% endif %}
+	{% if 'APB1Prescaler' in RCC_Conf.keys() %}// Set Apb1 prescaler value
+	Apb1Clock::SetPrescaler(Apb1Clock::Div{{RCC_Conf['APB1Prescaler']}});{% endif %}
+	{% if 'APB2Prescaler' in RCC_Conf.keys() %}// Set Apb2 prescaler value
+	Apb2Clock::SetPrescaler(Apb2Clock::Div{{RCC_Conf['APB2Prescaler']}});{% endif %}
+}
+
+void ConfigureGPIO()
+{
+{% for portName in GPIO_Conf.keys() %}
+	{% if 'Label' in GPIO_Conf[portName] %}// {{GPIO_Conf[portName]['Label']}} configuration{% else %}// {{portName}} configuration{% endif %}
+	
+	// Enable port clocking
+	{{portName}}::Port::Enable();
+	// Configure as {{GPIO_Conf[portName]['Conf']}} pin
+	{{portName}}::SetConfiguration({{portName}}::Configuration::{{GPIO_Conf[portName]['Conf']}});
+	{% if 'GPIO_Mode' in GPIO_Conf[portName].keys() %}{% if GPIO_Conf[portName]['GPIO_Mode'] == 'PP' %}// Set driver type as push-pull
+	{{portName}}::SetDriverType({{portName}}::DriverType::PushPull);{% else %}// Set driver type as opendrain
+	{{portName}}::SetDriverType({{portName}}::DriverType::OpenDrain);{% endif %}{% endif %}	
+	{% if 'GPIO_Speed' in GPIO_Conf[portName].keys() %}{% if GPIO_Conf[portName]['GPIO_Speed'] == 'HIGH' %}// Set speed as fast
+	{{portName}}::SetSpeed({{portName}}::Speed::Fast);{% endif %}{% if GPIO_Conf[portName]['GPIO_Speed'] == 'MEDIUM' %}// Set speed as medium
+	{{portName}}::SetSpeed({{portName}}::Speed::Medium);{% endif %}{% if GPIO_Conf[portName]['GPIO_Speed'] == 'LOW' %}// Set speed as slow
+	{{portName}}::SetSpeed({{portName}}::Speed::Slow){% endif %}{% endif %}
+	{% if 'PuPd' in GPIO_Conf[portName].keys() %}{% if GPIO_Conf[portName]['PuPd'] == 'PULLUP' %}// Set pull-mode as pull-up
+	{{portName}}::SetPullMode({{portName}}::PullMode::PullUp);{% endif %}{% if GPIO_Conf[portName]['PuPd'] == 'PULLDOWN' %}// Set pull-mode as pull-down
+	{{portName}}::SetPullMode({{portName}}::PullMode::PullDown);{% endif %}{% if GPIO_Conf[portName]['PuPd'] == 'NOPULL' %}// Set pull-mode as no-pull
+	{{portName}}::SetPullMode({{portName}}::PullMode::NoPull);{% endif %}{% endif %}
+{% endfor %}	
+}
+

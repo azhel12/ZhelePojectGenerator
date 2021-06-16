@@ -48,7 +48,9 @@ def GPIO_Analog_Pars(portName, rawConfigDict):
 def GPIO_Pars(rawConfigDict):
     number = 0
     portsName = []
+
     while ('Pin' + str(number) in rawConfigDict['Mcu']):
+        index = rawConfigDict['Mcu']['Pin' + str(number)].find('-')
         portsName.append(str.capitalize(str.lower(rawConfigDict['Mcu']['Pin' + str(number)])))
         number = number + 1
 
@@ -57,10 +59,24 @@ def GPIO_Pars(rawConfigDict):
     for portName in portsName:
         if str.upper(portName) in rawConfigDict.keys():
             if rawConfigDict[str.upper(portName)]['Signal'] == 'GPIO_Output':
-                GPIO_Conf[portName] = GPIO_Output_Pars(str.upper(portName), rawConfigDict)
+                index = portName.find('-')
+                if index != -1:
+                    GPIO_Conf[portName[0: index]] = GPIO_Output_Pars(str.upper(portName), rawConfigDict)
+                else:
+                    GPIO_Conf[portName] = GPIO_Output_Pars(str.upper(portName), rawConfigDict)
+
             if rawConfigDict[str.upper(portName)]['Signal'] == 'GPIO_Input':
-                GPIO_Conf[portName] = GPIO_Input_Pars(str.upper(portName), rawConfigDict)
+                index = portName.find('-')
+                if index != -1:
+                    GPIO_Conf[portName[0: index]] = GPIO_Input_Pars(str.upper(portName), rawConfigDict)
+                else:
+                    GPIO_Conf[portName] = GPIO_Input_Pars(str.upper(portName), rawConfigDict)
+
             if rawConfigDict[str.upper(portName)]['Signal'] == 'GPIO_Analog':
-                GPIO_Conf[portName] = GPIO_Analog_Pars(str.upper(portName), rawConfigDict)
+                index = portName.find('-')
+                if index != -1:
+                    GPIO_Conf[portName[0: index]] = GPIO_Analog_Pars(str.upper(portName), rawConfigDict)
+                else:
+                    GPIO_Conf[portName] = GPIO_Analog_Pars(str.upper(portName), rawConfigDict)
 
     return GPIO_Conf

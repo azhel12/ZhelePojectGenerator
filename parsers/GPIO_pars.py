@@ -17,11 +17,14 @@ def GPIO_Output_Pars(portName, rawConfigDict):
 
     portConf['Conf'] = "Out"
 
-    index = re.search("_", rawConfigDict[portName]['GPIO_PuPd'])
-    portConf['PuPd'] = rawConfigDict[portName]['GPIO_PuPd'][index.end(): len(rawConfigDict[portName]['GPIO_PuPd'])]
+    if 'GPIO_PuPd' in rawConfigDict[portName].keys():
+        index = re.search("_", rawConfigDict[portName]['GPIO_PuPd'])
+        portConf['PuPd'] = rawConfigDict[portName]['GPIO_PuPd'][index.end(): len(rawConfigDict[portName]['GPIO_PuPd'])]
 
-    index = re.search("GPIO_MODE_OUTPUT_", rawConfigDict[portName]['GPIO_ModeDefaultOutputPP'])
-    portConf['GPIO_Mode'] = rawConfigDict[portName]['GPIO_ModeDefaultOutputPP'][index.end(): len(rawConfigDict[portName]['GPIO_ModeDefaultOutputPP'])]
+    if 'GPIO_ModeDefaultOutputPP' in rawConfigDict[portName].keys():
+        index = re.search("GPIO_MODE_OUTPUT_", rawConfigDict[portName]['GPIO_ModeDefaultOutputPP'])
+        portConf['GPIO_Mode'] = rawConfigDict[portName]['GPIO_ModeDefaultOutputPP'][index.end(): len(rawConfigDict[portName]['GPIO_ModeDefaultOutputPP'])]
+
     if 'GPIO_Speed' in rawConfigDict[portName].keys():
         index = re.search("GPIO_SPEED_FREQ_", rawConfigDict[portName]['GPIO_Speed'])
         portConf['GPIO_Speed'] = rawConfigDict[portName]['GPIO_Speed'][index.end(): len(rawConfigDict[portName]['GPIO_Speed'])]
@@ -43,7 +46,12 @@ def GPIO_Analog_Pars(portName, rawConfigDict):
     return portConf
 
 def GPIO_Pars(rawConfigDict):
-    portsName = {'Pa1', 'Pa2', 'Pa3', 'Pa4', 'Pa5', 'Pa6', 'Pa7', 'Pa8', 'Pa9', 'Pa10', 'Pa11', 'Pa12', 'Pa13', 'Pa14', 'Pb1'}
+    number = 0
+    portsName = []
+    while ('Pin' + str(number) in rawConfigDict['Mcu']):
+        portsName.append(str.capitalize(str.lower(rawConfigDict['Mcu']['Pin' + str(number)])))
+        number = number + 1
+
     GPIO_Conf = dict()
 
     for portName in portsName:

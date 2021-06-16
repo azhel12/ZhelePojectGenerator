@@ -31,7 +31,7 @@ def RCC_Pars(rawConfigDict):
 
     if 'PLLMUL' in rawConfigDict['RCC'].keys():
         indexFirstDigit = re.search("\d", rawConfigDict['RCC']['PLLMUL'])
-        rccConfigDict['Multipler'] = rawConfigDict['RCC']['PLLMUL'][indexFirstDigit.start(): len(rawConfigDict['RCC']['PLLMUL'])]
+        rccConfigDict['Multiplier'] = rawConfigDict['RCC']['PLLMUL'][indexFirstDigit.start(): len(rawConfigDict['RCC']['PLLMUL'])]
 
     if 'TimSys_Div' in rawConfigDict['RCC'].keys():
         indexFirstDigit = re.search("\d", rawConfigDict['RCC']['TimSys_Div'])

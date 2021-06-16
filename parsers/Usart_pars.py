@@ -4,6 +4,7 @@ def Usart_Pars(rawConfigDict):
     number = 0
     portsName = []
     while ('Pin' + str(number) in rawConfigDict['Mcu']):
+        index = rawConfigDict['Mcu']['Pin' + str(number)].find('-')
         portsName.append(str.capitalize(str.lower(rawConfigDict['Mcu']['Pin' + str(number)])))
         number = number + 1
 
@@ -14,24 +15,56 @@ def Usart_Pars(rawConfigDict):
             if 'Signal' in rawConfigDict[str.upper(portName)].keys():
                 if rawConfigDict[str.upper(portName)]['Signal'] == 'USART1_RX':
                     usartConfigDict['USART1'] = dict()
-                    usartConfigDict['USART1']['RX'] = portName
+                    index = portName.find('-')
+                    if index != -1:
+                        usartConfigDict['USART1']['RX'] = portName[0: index]
+                    else:
+                        usartConfigDict['USART1']['RX'] = portName
                 if rawConfigDict[str.upper(portName)]['Signal'] == 'USART1_TX':
-                    usartConfigDict['USART1']['TX'] = portName
+                    index = portName.find('-')
+                    if index != -1:
+                        usartConfigDict['USART1']['TX'] = portName[0: index]
+                    else:
+                        usartConfigDict['USART1']['TX'] = portName
                 if rawConfigDict[str.upper(portName)]['Signal'] == 'USART2_RX':
                     usartConfigDict['USART3'] = dict()
-                    usartConfigDict['USART2']['RX'] = portName
+                    index = portName.find('-')
+                    if index != -1:
+                        usartConfigDict['USART2']['RX'] = portName[0: index]
+                    else:
+                        usartConfigDict['USART2']['RX'] = portName
                 if rawConfigDict[str.upper(portName)]['Signal'] == 'USART2_TX':
-                    usartConfigDict['USART2']['TX'] = portName
+                    index = portName.find('-')
+                    if index != -1:
+                        usartConfigDict['USART2']['TX'] = portName[0: index]
+                    else:
+                        usartConfigDict['USART2']['TX'] = portName
                 if rawConfigDict[str.upper(portName)]['Signal'] == 'USART3_RX':
-                    usartConfigDict['USART3'] = dict();
-                    usartConfigDict['USART3']['RX'] = portName
+                    usartConfigDict['USART3'] = dict()
+                    index = portName.find('-')
+                    if index != -1:
+                        usartConfigDict['USART3']['RX'] = portName[0: index]
+                    else:
+                        usartConfigDict['USART3']['RX'] = portName
                 if rawConfigDict[str.upper(portName)]['Signal'] == 'USART3_TX':
-                    usartConfigDict['USART3']['TX'] = portName
+                    index = portName.find('-')
+                    if index != -1:
+                        usartConfigDict['USART3']['TX'] = portName[0: index]
+                    else:
+                        usartConfigDict['USART3']['TX'] = portName
                 if rawConfigDict[str.upper(portName)]['Signal'] == 'USART4_RX':
-                    usartConfigDict['USART4'] = dict();
-                    usartConfigDict['USART4']['RX'] = portName
+                    usartConfigDict['USART4'] = dict()
+                    index = portName.find('-')
+                    if index != -1:
+                        usartConfigDict['USART4']['RX'] = portName[0: index]
+                    else:
+                        usartConfigDict['USART4']['RX'] = portName
                 if rawConfigDict[str.upper(portName)]['Signal'] == 'USART4_TX':
-                    usartConfigDict['USART4']['TX'] = portName
+                    index = portName.find('-')
+                    if index != -1:
+                        usartConfigDict['USART4']['TX'] = portName[0: index]
+                    else:
+                        usartConfigDict['USART4']['TX'] = portName
 
     if 'USART2' in rawConfigDict.keys():
         usartConfigDict['USART2'] = dict()

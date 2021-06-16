@@ -12,13 +12,13 @@ void ConfigureClock()
     PllClock::SelectClockSource(PllClock::Internal);{% endif %}
     {% if 'PLLM' in RCC_Conf.keys() %}// Set PLLM value
     PllClock::SetDivider({{RCC_Conf['PLLM']}});
-    {% else %}// Set PllDivider value
+    {% elif 'PLLDivider' in RCC_Conf.keys() %}// Set PllDivider value
     PllClock::SetDevider({{RCC_Conf['PLLDivider']}});{% endif %}
     {% if 'PLLN' in RCC_Conf.keys() %}// Set PLLN value
     PllClock::SetMultiplier({{RCC_Conf['PLLN']}});{% else %}//Set Multiplier
-    PllClock::SetMultiplier({{RCC_Conf['PLLMultiplier']}});{% endif %}{% endif %}
+    PllClock::SetMultiplier({{RCC_Conf['Multiplier']}});{% endif %}{% endif %}
     {% if 'AHBPrescaler' in RCC_Conf.keys() %}// Set Ahb prescaler value
-    AhbClock::SetPrescaler(Prescaler::Div{{RCC_Conf['AHBPrescaler']}});{% endif %}
+    AhbClock::SetPrescaler(AhbClock::Div{{RCC_Conf['AHBPrescaler']}});{% endif %}
     {% if 'APB1Prescaler' in RCC_Conf.keys() %}// Set Apb1 prescaler value
     Apb1Clock::SetPrescaler(Apb1Clock::Div{{RCC_Conf['APB1Prescaler']}});{% endif %}
     {% if 'APB2Prescaler' in RCC_Conf.keys() %}// Set Apb2 prescaler value
